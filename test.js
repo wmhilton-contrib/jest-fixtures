@@ -3,6 +3,7 @@
 
 const fixtures = require('./');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const FIXTURES_DIR = path.join(__dirname, 'fixtures');
@@ -51,9 +52,9 @@ describe('getFixturePathSync()', () => {
 });
 
 describe('createTempDir', () => {
-  it('should create a directory in /tmp', () => {
+  it('should create a directory in os.tmpdir()', () => {
     return fixtures.createTempDir().then(dirName => {
-      expect(dirName.startsWith('/tmp/jest-fixture-')).toBe(true);
+      expect(dirName.startsWith(path.join(os.tmpdir(), 'jest-fixture-'))).toBe(true);
       let stat = fs.statSync(dirName);
       expect(stat.isDirectory()).toBe(true);
     });
@@ -61,16 +62,16 @@ describe('createTempDir', () => {
 });
 
 describe('createTempDirSync', () => {
-  it('should create a directory in /tmp', () => {
+  it('should create a directory in os.tmpdir()', () => {
     let dirName = fixtures.createTempDirSync();
-    expect(dirName.startsWith('/tmp/jest-fixture-')).toBe(true);
+    expect(dirName.startsWith(path.join(os.tmpdir(), 'jest-fixture-'))).toBe(true);
     let stat = fs.statSync(dirName);
     expect(stat.isDirectory()).toBe(true);
   });
 });
 
 function assertCopiedFiles(tempDir) {
-  expect(fs.lstatSync(path.join(tempDir, 'symlink-to-file')).isSymbolicLink()).toBe(true);
+  if (process.platform !== 'win32') expect(fs.lstatSync(path.join(tempDir, 'symlink-to-file')).isSymbolicLink()).toBe(true);
   expect(fs.lstatSync(path.join(tempDir, 'file.txt')).isFile()).toBe(true);
   expect(fs.lstatSync(path.join(tempDir, 'nested')).isDirectory()).toBe(true);
   expect(fs.lstatSync(path.join(tempDir, 'nested', 'nested-file.txt')).isFile()).toBe(true);
