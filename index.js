@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
+const os = require('os');
 const path = require('path');
 const findUp = require('find-up');
 const promisify = require('typeable-promisify');
@@ -9,7 +10,7 @@ const onExit = require('signal-exit');
 const rimraf = require('rimraf');
 
 const slice = Array.prototype.slice;
-const TEMP_PATH = path.join('/tmp', 'jest-fixture-');
+const TEMP_PATH = path.join(os.tmpdir(), 'jest-fixture-');
 const TEMP_DIRS_CREATED = [];
 
 function toFixturesDir(fileParts) {
